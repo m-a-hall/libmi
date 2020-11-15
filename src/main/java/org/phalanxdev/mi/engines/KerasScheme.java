@@ -43,6 +43,13 @@ public abstract class KerasScheme {
           "Extreme gradient boosting classifier", "Extreme gradient boosting regressor",
           "Multi-layer perceptron classifier", "Multi-layer perceptron regressor" );
 
+  /**
+   * Returns a Scheme object configured for the Keras engine.
+   *
+   * @param schemeName the name of the scheme to get
+   * @return a configured Scheme object
+   * @throws Exception if the scheme is not supported in this engine.
+   */
   public static Scheme getSupervisedKerasScheme( String schemeName ) throws Exception {
     if ( SupervisedScheme.s_defaultClassifierSchemeList.contains( schemeName ) && !s_excludedSchemes
         .contains( schemeName ) ) {
