@@ -12,7 +12,7 @@ Clone libmi to a local repository:
 
     $ git clone https://github.com/m-a-hall/libmi.git
 
-Change into the clone repository and build: 
+Change into the cloned repository and build: 
 
     $ cd libmi 
     $ mvn clean install 
