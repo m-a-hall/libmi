@@ -38,6 +38,13 @@ public class DL4jScheme {
           "Support vector regressor", "Multi-layer perceptron classifier", "Multi-layer perceptron regressor",
           "Extreme gradient boosting classifier", "Extreme gradient boosting regressor");
 
+  /**
+   * Static factory method for obtaining {@code Scheme} objects encapsulating particular DL4j implementations
+   *
+   * @param schemeName the name of the scheme to get
+   * @return a {@code Scheme} object
+   * @throws Exception if a problem occurs
+   */
   public static Scheme getSupervisedDlL4jScheme( String schemeName ) throws Exception {
     if ( SupervisedScheme.s_defaultClassifierSchemeList.contains( schemeName ) && !s_excludedSchemes
         .contains( schemeName ) ) {
