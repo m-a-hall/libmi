@@ -44,11 +44,11 @@ public abstract class KerasScheme {
           "Multi-layer perceptron classifier", "Multi-layer perceptron regressor" );
 
   /**
-   * Returns a Scheme object configured for the Keras engine.
+   * Static factory method for obtaining {@code Scheme} objects encapsulating particular Keras implementations
    *
    * @param schemeName the name of the scheme to get
-   * @return a configured Scheme object
-   * @throws Exception if the scheme is not supported in this engine.
+   * @return a {@code Scheme} object
+   * @throws Exception if a problem occurs
    */
   public static Scheme getSupervisedKerasScheme( String schemeName ) throws Exception {
     if ( SupervisedScheme.s_defaultClassifierSchemeList.contains( schemeName ) && !s_excludedSchemes
