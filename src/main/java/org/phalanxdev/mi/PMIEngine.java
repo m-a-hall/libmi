@@ -77,11 +77,32 @@ public abstract class PMIEngine {
       // nothing specified in the supported engine key, so add all the defaults
       if ( s_availableEngines.size() == 0 ) {
         s_availableEngines.put( WekaEngine.ENGINE_NAME, WekaEngine.ENGINE_CLASS );
-        s_availableEngines.put( PythonEngine.ENGINE_NAME, PythonEngine.ENGINE_CLASS );
-        s_availableEngines.put( REngine.ENGINE_NAME, REngine.ENGINE_CLASS );
-        s_availableEngines.put( MLlibEngine.ENGINE_NAME, MLlibEngine.ENGINE_CLASS );
-        s_availableEngines.put( DL4jEngine.ENGINE_NAME, DL4jEngine.ENGINE_CLASS );
-        s_availableEngines.put( KerasEngine.ENGINE_NAME, KerasEngine.ENGINE_CLASS );
+        try {
+          instantiateEngine(PythonEngine.ENGINE_CLASS);
+          s_availableEngines.put(PythonEngine.ENGINE_NAME, PythonEngine.ENGINE_CLASS);
+        } catch (Exception e) {
+          // ingore - don't add if this engine is not available
+        }
+        try {
+          instantiateEngine(REngine.ENGINE_CLASS);
+          s_availableEngines.put(REngine.ENGINE_NAME, REngine.ENGINE_CLASS);
+        } catch (Exception e) {
+        }
+        try {
+          instantiateEngine(MLlibEngine.ENGINE_CLASS);
+          s_availableEngines.put(MLlibEngine.ENGINE_NAME, MLlibEngine.ENGINE_CLASS);
+        } catch (Exception e) {
+        }
+        try {
+          instantiateEngine(DL4jEngine.ENGINE_CLASS);
+          s_availableEngines.put(DL4jEngine.ENGINE_NAME, DL4jEngine.ENGINE_CLASS);
+        } catch (Exception e) {
+        }
+        try {
+          instantiateEngine(KerasEngine.ENGINE_CLASS);
+          s_availableEngines.put( KerasEngine.ENGINE_NAME, KerasEngine.ENGINE_CLASS );
+        } catch (Exception e) {
+        }
       }
     }
   }
