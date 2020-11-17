@@ -28,7 +28,7 @@ import org.junit.Test;
 import weka.core.Instances;
 
 /**
- * @author Mark Hall (mhall{[at]}pentaho{[dot]}com)
+ * @author Mark Hall (mhall{[at]}waikato{[dot]}ac{[dot]}nz)
  * @version 1: $
  */
 public class BaseSchemeTest {
