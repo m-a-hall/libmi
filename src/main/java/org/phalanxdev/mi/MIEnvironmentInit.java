@@ -53,7 +53,7 @@ public class MIEnvironmentInit {
         if (pythonPackage == null) {
           String latestCompatibleVersion = getLatestVersion("wekaPython");
           System.out.println(
-              "[PMI] wekaPython package is not installed - attempting to install version "
+              "[LibMI] wekaPython package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
               .installPackageFromRepository("wekaPython", latestCompatibleVersion, System.out);
@@ -65,7 +65,7 @@ public class MIEnvironmentInit {
         if (rPackage == null) {
           String latestCompatibleVersion = getLatestVersion("RPlugin");
           System.out.println(
-              "[PMI] RPlugin package is not installed - attempting to install version "
+              "[LibMI] RPlugin package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
               .installPackageFromRepository("RPlugin", latestCompatibleVersion, System.out);
@@ -78,7 +78,7 @@ public class MIEnvironmentInit {
         if (libSVMPackage == null) {
           String latestCompatibleVersion = getLatestVersion("LibSVM");
           System.out.println(
-              "[PMI] libSVM package is not installed - attempting to install version "
+              "[LibMI] libSVM package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
               .installPackageFromRepository("LibSVM", latestCompatibleVersion, System.out);
@@ -91,7 +91,7 @@ public class MIEnvironmentInit {
         if (distributedWekaBasePackage == null) {
           String latestCompatibleVersion = getLatestVersion("distributedWekaBase");
           System.out.println(
-              "[PMI] distributed Weka base package is not installed - attempting to install version "
+              "[LibMI] distributed Weka base package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
               .installPackageFromRepository("distributedWekaBase", latestCompatibleVersion,
@@ -100,11 +100,11 @@ public class MIEnvironmentInit {
 
         weka.core.packageManagement.Package
             distributedWekaSparkDevPackage =
-            weka.core.WekaPackageManager.getInstalledPackageInfo("distributedWekaSpark2Dev");
+            weka.core.WekaPackageManager.getInstalledPackageInfo("distributedWekaSpark3Dev");
         if (distributedWekaSparkDevPackage == null) {
-          String latestCompatibleVersion = getLatestVersion("distributedWekaSpark2Dev");
+          String latestCompatibleVersion = getLatestVersion("distributedWekaSpark3Dev");
           System.out.println(
-              "[PMI] distributed Weka Spark package is not installed - attempting to install version "
+              "[LibMI] distributed Weka Spark package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
               .installPackageFromRepository("distributedWekaSpark2Dev", latestCompatibleVersion,
@@ -118,7 +118,7 @@ public class MIEnvironmentInit {
             weka.core.WekaPackageManager.getInstalledPackageInfo( "netlibNativeOSX" );
         if ( netlibNative == null ) {
           String latestCompatibleVersion = getLatestVersion( "netlibNativeOSX" );
-          System.out.println( "[PMI] netlibNativeOSX package is not installed - attempting to install version "
+          System.out.println( "[LibMI] netlibNativeOSX package is not installed - attempting to install version "
               + latestCompatibleVersion );
           weka.core.WekaPackageManager
               .installPackageFromRepository( "netlibNativeOSX", latestCompatibleVersion, System.out );
@@ -129,7 +129,7 @@ public class MIEnvironmentInit {
             weka.core.WekaPackageManager.getInstalledPackageInfo( "netlibNativeWindows" );
         if ( netlibNative == null ) {
           String latestCompatibleVersion = getLatestVersion( "netlibNativeWindows" );
-          System.out.println( "[PMI] netlibNativeWindows package is not installed - attempting to install version "
+          System.out.println( "[LibMI] netlibNativeWindows package is not installed - attempting to install version "
               + latestCompatibleVersion );
           weka.core.WekaPackageManager
               .installPackageFromRepository( "netlibNativeWindows", latestCompatibleVersion, System.out );
@@ -140,7 +140,7 @@ public class MIEnvironmentInit {
             weka.core.WekaPackageManager.getInstalledPackageInfo( "netlibNativeLinux" );
         if ( netlibNative == null ) {
           String latestCompatibleVersion = getLatestVersion( "netlibNativeLinux" );
-          System.out.println( "[PMI] netlibNativeLinux package is not installed - attempting to install version "
+          System.out.println( "[LibMI] netlibNativeLinux package is not installed - attempting to install version "
               + latestCompatibleVersion );
           weka.core.WekaPackageManager
               .installPackageFromRepository( "netlibNativeLinux", latestCompatibleVersion, System.out );
@@ -155,7 +155,7 @@ public class MIEnvironmentInit {
         if (dl4jPackage == null) {
           String latestCompatibleVersion = getLatestVersion("wekaDeeplearning4j");
           System.out.println(
-              "[PMI] wekaDeeplearning4j package is not installed - attempting to install version "
+              "[LibMI] wekaDeeplearning4j package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           weka.core.WekaPackageManager
               .installPackageFromRepository("wekaDeeplearning4j", latestCompatibleVersion,
@@ -168,7 +168,7 @@ public class MIEnvironmentInit {
         if (kerasZooPackage == null) {
           String latestCompatibleVersion = getLatestVersion("kerasZoo");
           System.out.println(
-              "[PMI] kerasZoo package is not installed - attempting to install version "
+              "[LibMI] kerasZoo package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           weka.core.WekaPackageManager
               .installPackageFromRepository("kerasZoo", latestCompatibleVersion, System.out);

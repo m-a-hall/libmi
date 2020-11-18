@@ -22,6 +22,7 @@ import org.phalanxdev.mi.utils.IMILogAdapter;
 import org.phalanxdev.mi.utils.IMIVariableAdaptor;
 import weka.classifiers.Classifier;
 import weka.classifiers.evaluation.Evaluation;
+import weka.core.Attribute;
 import weka.core.BatchPredictor;
 import weka.core.Environment;
 import weka.core.EnvironmentHandler;
@@ -153,6 +154,85 @@ public class Evaluator {
     m_templateClassifier = trainedModel;
     m_templateClassifier = copyClassifierTemplate(); // untrained template
     m_trainingData = trainingHeader;
+  }
+
+  /**
+   * Returns metadata on the evaluation output row returned after evaluation, based on the input
+   * data characteristics (class type) and user-specified settings (e.g. output of IR metrics etc.)
+   *
+   * @param trainingHeader the training data header; if null, then assumes that initialize() has
+   * been called in order to provide the full training set
+   * @param stratifiedBatches true if evaluation is being performed on stratified batches of data
+   * @return evaluation row metadata in the form of a list of Attribute objects.
+   * @throws Exception if no training data information is available.
+   */
+  public List<Attribute> getEvalRowMetadata(Instances trainingHeader,
+      boolean stratifiedBatches) throws Exception {
+
+    if (trainingHeader == null && m_trainingData == null) {
+      throw new Exception("Unable to determine output metadata as no "
+          + "training data information provided");
+    }
+    Instances trainingInfo = trainingHeader != null ? trainingHeader : m_trainingData;
+    if (trainingInfo.classIndex() < 0) {
+      throw new Exception("Unable to determine output metadata as attribute is not "
+          + "set in training data information provided");
+    }
+    List<Attribute> metadata = new ArrayList<>();
+    if (m_evaluationMode != EvalMode.NONE) {
+      metadata.add(new Attribute("Scheme name", (List<String>) null));
+      metadata.add(new Attribute("Scheme options", (List<String>) null));
+      metadata.add(new Attribute("Evaluation mode", (List<String>) null));
+      if (stratifiedBatches) {
+        metadata.add(new Attribute("Stratification value", (List<String>) null));
+      }
+
+      // basic evaluation fields
+      metadata.add(new Attribute("Unclassified instances"));
+      if (trainingInfo.classAttribute().isNominal()) {
+        metadata.add(new Attribute("Correctly classified instances"));
+        metadata.add(new Attribute("Incorrectly classified instances"));
+        metadata.add(new Attribute("Percent correct"));
+        metadata.add(new Attribute("Percent incorrect"));
+      }
+      metadata.add(new Attribute("Mean absolute error"));
+      metadata.add(new Attribute("Root mean squared error"));
+      if (trainingInfo.classAttribute().isNumeric()) {
+        metadata.add(new Attribute("Correlation coefficient"));
+      }
+
+      if (m_evaluationMode != EvalMode.PREQUENTIAL) {
+        metadata.add(new Attribute("Relative absolute error"));
+        metadata.add(new Attribute("Root relative squared error"));
+      }
+
+      metadata.add(new Attribute("Total number of instances"));
+      if (trainingInfo.classAttribute().isNominal()) {
+        metadata.add(new Attribute("Kappa statistic"));
+
+        if (m_outputIRMetrics) {
+          for (int i = 0; i < trainingInfo.classAttribute().numValues(); i++) {
+            String label = trainingInfo.classAttribute().value(i) + "_";
+            metadata.add(new Attribute(label + "TP rate"));
+            metadata.add(new Attribute(label + "FP rate"));
+            metadata.add(new Attribute(label + "Precision"));
+            metadata.add(new Attribute(label + "Recall"));
+            metadata.add(new Attribute(label + "F-measure"));
+            metadata.add(new Attribute(label + "MCC"));
+          }
+        }
+        if (m_computeAUC) {
+          for (int i = 0; i < trainingInfo.classAttribute().numValues(); i++) {
+            String label = trainingInfo.classAttribute().value(i) + "_";
+            metadata.add(new Attribute(label + "ROC area"));
+            metadata.add(new Attribute(label + "PRC area"));
+          }
+        }
+        metadata.add(new Attribute("Confusion matrix"));
+      }
+    }
+
+    return metadata;
   }
 
   /**
