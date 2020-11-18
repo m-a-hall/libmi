@@ -15,6 +15,8 @@
 
 package org.phalanxdev.mi;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.phalanxdev.mi.utils.IMIMessages;
 import org.phalanxdev.mi.utils.IMILogAdapter;
 import org.phalanxdev.mi.utils.IMIVariableAdaptor;
@@ -478,12 +480,11 @@ public class Evaluator {
    * Return a row containing evaluation metrics
    *
    * @param stratificationValue optional stratification value
-   * @param outputRowSize the size of the row to output
    * @param batchNumber the current batch number (if applicable)
    * @param log log to use
    * @return a row of evaluation metrics
    */
-  public Object[] getEvalRow(String stratificationValue, int outputRowSize, int batchNumber,
+  public Object[] getEvalRow(String stratificationValue, int batchNumber,
       IMILogAdapter log) {
     if (m_trainingData == null) {
       throw new IllegalStateException(
@@ -492,16 +493,16 @@ public class Evaluator {
     if (m_evaluationMode == EvalMode.NONE || m_eval.numInstances() == 0) {
       return null;
     } else {
-      Object[] outputRow = new Object[outputRowSize];
+      List<Object> outputRow = new ArrayList<>();
       int i = 0;
       String schemeName = m_templateClassifier.getClass().getCanonicalName();
       schemeName = schemeName.substring(schemeName.lastIndexOf(".") + 1);
       if (batchNumber > 0) {
         schemeName = "" + batchNumber + "_" + schemeName;
       }
-      outputRow[i++] = schemeName;
+      outputRow.add(schemeName);
       String schemeOptions = Utils.joinOptions(((OptionHandler) m_templateClassifier).getOptions());
-      outputRow[i++] = schemeOptions;
+      outputRow.add(schemeOptions);
 
       String evalMode = m_evaluationMode.toString().toLowerCase();
       if (m_evaluationMode == EvalMode.PERCENTAGE_SPLIT) {
@@ -509,26 +510,26 @@ public class Evaluator {
       } else if (m_evaluationMode == EvalMode.CROSS_VALIDATION) {
         evalMode += " folds " + m_xValFolds + " seed " + m_randomSeed;
       }
-      outputRow[i++] = evalMode;
+      outputRow.add(evalMode);
 
       if (!SchemeUtils.isEmpty(stratificationValue)) {
-        outputRow[i++] = stratificationValue;
+        outputRow.add(stratificationValue);
       }
 
-      outputRow[i++] = m_eval.unclassified();
+      outputRow.add(m_eval.unclassified());
 
       if (m_trainingData.classAttribute().isNominal()) {
-        outputRow[i++] = m_eval.correct();
-        outputRow[i++] = m_eval.incorrect();
-        outputRow[i++] = m_eval.pctCorrect();
-        outputRow[i++] = m_eval.pctIncorrect();
+        outputRow.add(m_eval.correct());
+        outputRow.add(m_eval.incorrect());
+        outputRow.add(m_eval.pctCorrect());
+        outputRow.add(m_eval.pctIncorrect());
       }
-      outputRow[i++] = m_eval.meanAbsoluteError();
-      outputRow[i++] = m_eval.rootMeanSquaredError();
+      outputRow.add(m_eval.meanAbsoluteError());
+      outputRow.add(m_eval.rootMeanSquaredError());
 
       if (m_trainingData.classAttribute().isNumeric()) {
         try {
-          outputRow[i++] = m_eval.correlationCoefficient();
+          outputRow.add(m_eval.correlationCoefficient());
         } catch (Exception e) {
           e.printStackTrace();
         }
@@ -536,39 +537,39 @@ public class Evaluator {
 
       if (m_evaluationMode != EvalMode.PREQUENTIAL) {
         try {
-          outputRow[i++] = m_eval.relativeAbsoluteError();
+          outputRow.add(m_eval.relativeAbsoluteError());
         } catch (Exception e) {
           e.printStackTrace();
         }
-        outputRow[i++] = m_eval.rootRelativeSquaredError();
+        outputRow.add(m_eval.rootRelativeSquaredError());
       }
 
-      outputRow[i++] = m_eval.numInstances();
+      outputRow.add(m_eval.numInstances());
 
       if (m_trainingData.classAttribute().isNominal()) {
-        outputRow[i++] = m_eval.kappa();
+        outputRow.add(m_eval.kappa());
 
         if (m_outputIRMetrics) {
           for (int j = 0; j < m_trainingData.classAttribute().numValues(); j++) {
-            outputRow[i++] = m_eval.truePositiveRate(j);
-            outputRow[i++] = m_eval.falsePositiveRate(j);
-            outputRow[i++] = m_eval.precision(j);
-            outputRow[i++] = m_eval.recall(j);
-            outputRow[i++] = m_eval.fMeasure(j);
-            outputRow[i++] = m_eval.matthewsCorrelationCoefficient(j);
+            outputRow.add(m_eval.truePositiveRate(j));
+            outputRow.add(m_eval.falsePositiveRate(j));
+            outputRow.add(m_eval.precision(j));
+            outputRow.add(m_eval.recall(j));
+            outputRow.add(m_eval.fMeasure(j));
+            outputRow.add(m_eval.matthewsCorrelationCoefficient(j));
           }
         }
 
         if (m_computeAUC) {
           for (int j = 0; j < m_trainingData.classAttribute().numValues(); j++) {
-            outputRow[i++] = m_eval.areaUnderROC(j);
-            outputRow[i++] = m_eval.areaUnderPRC(j);
+            outputRow.add(m_eval.areaUnderROC(j));
+            outputRow.add(m_eval.areaUnderPRC(j));
           }
         }
 
         try {
           String matrix = m_eval.toMatrixString();
-          outputRow[i] = matrix;
+          outputRow.add(matrix);
           if (log != null) {
             log.logBasic(matrix);
           }
@@ -576,7 +577,7 @@ public class Evaluator {
           ex.printStackTrace();
         }
       }
-      return outputRow;
+      return outputRow.toArray(new Object[0]);
     }
   }
 
@@ -592,7 +593,8 @@ public class Evaluator {
     }
 
     if (!m_evalWasPerformed) {
-      throw new IllegalStateException(m_messages.getString("Evaluator.Error.EvaluationWasNotPerformed"));
+      throw new IllegalStateException(
+          m_messages.getString("Evaluator.Error.EvaluationWasNotPerformed"));
     }
 
     return m_eval;
