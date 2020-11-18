@@ -591,6 +591,10 @@ public class Evaluator {
           m_messages.getString("Evaluator.Error.EvaluatorNotInitialized"));
     }
 
+    if (!m_evalWasPerformed) {
+      throw new IllegalStateException(m_messages.getString("Evaluator.Error.EvaluationWasNotPerformed"));
+    }
+
     return m_eval;
   }
 

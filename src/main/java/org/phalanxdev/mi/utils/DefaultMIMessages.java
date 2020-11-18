@@ -30,6 +30,7 @@ public class DefaultMIMessages implements IMIMessages {
 
   public DefaultMIMessages() {
     m_messages.put("Evaluator.Error.EvaluatorNotInitialized", "This Evaluator object has not been initialized.");
+    m_messages.put("Evaluator.Error.EvaluationWasNotPerformed", "Evaluation was not performed.");
     m_messages.put("Evaluator.Message.UnableToPerformPercentageSplit", "Unable to perform a percentage split evaluation because there are fewer than 10 training instances.");
     m_messages.put("Evaluator.Message.UnableToPerformCrossValidation", "Unable to perform a {0} fold cross-validation because there are fewer training instances ({0}) than folds.");
     m_messages.put("Evaluator.Message.PerformingPercentageSplit", "Performing a percentage split ({0}%) evaluation...");

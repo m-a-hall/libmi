@@ -187,14 +187,12 @@ public class BaseSupervisedSchemeTest {
     assertTrue(embedded instanceof MultiFilter);
     mf = (MultiFilter)embedded;
 
-    // in this case, the original Discretize should have been replaced by the Resample -
-    // so a total of one filter in the MultiFilter
-    assertEquals(1, mf.getFilters().length);
+    assertEquals(2, mf.getFilters().length);
     assertTrue(mf.getFilter(0) instanceof Resample);
   }
 
   @Test
-  public void setPreprocessConfigVanillaBaseScheme() throws Exception {
+  public void testPreprocessConfigVanillaBaseScheme() throws Exception {
     Map<String, String> preprocessConfigs = m_baseScheme.getPreprocessingConfigs();
     Discretize d = new Discretize();
     String className = d.getClass().getCanonicalName();
@@ -215,7 +213,7 @@ public class BaseSupervisedSchemeTest {
   }
 
   @Test
-  public void setPreprocessiConfigBaseSchemeFilteredClassifierNoMultiFilter() throws Exception {
+  public void testPreprocessiConfigBaseSchemeFilteredClassifierNoMultiFilter() throws Exception {
     Map<String, String> preprocessConfigs = m_baseScheme.getPreprocessingConfigs();
     Discretize d = new Discretize();
     String className = d.getClass().getCanonicalName();
@@ -238,6 +236,43 @@ public class BaseSupervisedSchemeTest {
     assertEquals(2, mf.getFilters().length);
     assertTrue(mf.getFilter(1) instanceof Resample);
     assertTrue(mf.getFilter(0) instanceof Discretize);
+  }
+
+  @Test
+  public void testPreprocessConfigBaseSchemeFilteredClassifierMultiFilter() throws Exception {
+    Map<String, String> preprocessConfigs = m_baseScheme.getPreprocessingConfigs();
+    Discretize d = new Discretize();
+    String className = d.getClass().getCanonicalName();
+    String options = Utils.joinOptions(d.getOptions());
+    preprocessConfigs.put(className, options);
+
+    FilteredClassifier toUse = new FilteredClassifier();
+    toUse.setClassifier(new J48());
+
+    MultiFilter mf = new MultiFilter();
+    Filter[] f = new Filter[1];
+    f[0] = new Resample();
+    mf.setFilters(f);
+    toUse.setFilter(mf);
+
+    Classifier result = m_baseScheme.adjustForSamplingAndPreprocessing(m_dataNoString, toUse);
+    assertTrue(result instanceof FilteredClassifier);
+
+    Filter embedded = ((FilteredClassifier) result).getFilter();
+    assertTrue(embedded instanceof MultiFilter);
+    mf = (MultiFilter)embedded;
+
+    assertEquals(2, mf.getFilters().length);
+    assertTrue(mf.getFilter(0) instanceof Discretize);
+  }
+
+  @Test
+  public void testDropStringAttributesNecessary() throws Exception {
+    Classifier baseC = new J48();
+    Classifier result = m_baseScheme.adjustForSamplingAndPreprocessing(m_dataWithString, baseC);
+
+    assertTrue(result instanceof FilteredClassifier);
+    assertTrue(((FilteredClassifier)result).getFilter() instanceof MultiFilter);
   }
 
 }
