@@ -124,6 +124,38 @@ public class Evaluator {
   }
 
   /**
+   * Initialize the evaluator
+   *
+   * @param trainingData the training data
+   * @param untrainedClassifier the untrained classifier to use
+   * @throws Exception if a problem occurs
+   */
+  public void initialize(Instances trainingData, Classifier untrainedClassifier) throws Exception {
+    m_eval = new Evaluation(trainingData);
+    m_trainingData = trainingData;
+    m_templateClassifier = untrainedClassifier;
+  }
+
+  /**
+   * Initialize the evaluator. No prior class probabilities are/can be computed because all that is
+   * available at initialization time is the training metadata (i.e. attribute information).
+   *
+   * @param trainingHeader the training metadata (i.e. an instances object containing only attribute
+   * information and no actual instances)
+   * @param trainedModel the trained model to evaluate
+   * @throws Exception if a problem occurs
+   */
+  public void initializeNoPriors(Instances trainingHeader, Classifier trainedModel)
+      throws Exception {
+    m_eval = new Evaluation(trainingHeader);
+    m_eval.useNoPriors();
+    m_classifier = trainedModel;
+    m_templateClassifier = trainedModel;
+    m_templateClassifier = copyClassifierTemplate(); // untrained template
+    m_trainingData = trainingHeader;
+  }
+
+  /**
    * Set the percentage for training data in a percentage split evaluation
    *
    * @param percentageSplit the percentage for the training data
@@ -175,38 +207,6 @@ public class Evaluator {
    */
   public int getRandomSeed() {
     return m_randomSeed;
-  }
-
-  /**
-   * Initialize the evaluator
-   *
-   * @param trainingData the training data
-   * @param untrainedClassifier the untrained classifier to use
-   * @throws Exception if a problem occurs
-   */
-  public void initialize(Instances trainingData, Classifier untrainedClassifier) throws Exception {
-    m_eval = new Evaluation(trainingData);
-    m_trainingData = trainingData;
-    m_templateClassifier = untrainedClassifier;
-  }
-
-  /**
-   * Initialize the evaluator. No prior class probabilities are/can be computed because all that is
-   * available at initialization time is the training metadata (i.e. attribute information).
-   *
-   * @param trainingHeader the training metadata (i.e. an instances object containing only attribute
-   * information and no actual instances)
-   * @param trainedModel the trained model to evaluate
-   * @throws Exception if a problem occurs
-   */
-  public void initializeNoPriors(Instances trainingHeader, Classifier trainedModel)
-      throws Exception {
-    m_eval = new Evaluation(trainingHeader);
-    m_eval.useNoPriors();
-    m_classifier = trainedModel;
-    m_templateClassifier = trainedModel;
-    m_templateClassifier = copyClassifierTemplate(); // untrained template
-    m_trainingData = trainingHeader;
   }
 
   /**

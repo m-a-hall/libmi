@@ -44,9 +44,9 @@ public class ArffUtils {
    */
   @SuppressWarnings("unchecked")
   public static Instances simpleSpecHeader(String relationName, List<String> attNames,
-      List<Object> attTypes, String className) throws IllegalArgumentException {
+      List<Object> attTypes, String className) throws Exception {
     if (attNames.size() != attTypes.size()) {
-      throw new IllegalArgumentException(
+      throw new Exception(
           "Number of attribute names does not match the number of specified types!");
     }
     ArrayList<Attribute> atts = new ArrayList<>();
@@ -64,6 +64,9 @@ public class ArffUtils {
 
     Instances result = new Instances(relationName, atts, 0);
     if (className != null && className.length() > 0 && result.attribute(className) != null) {
+      if (result.attribute(className).isString()) {
+        throw new Exception("Class attribute can only be numeric or nominal");
+      }
       result.setClass(result.attribute(className));
     }
     return result;
@@ -90,6 +93,9 @@ public class ArffUtils {
     loader.setSource(new ByteArrayInputStream(csvInput.getBytes("UTF-8")));
     Instances result = loader.getDataSet();
     if (className != null && className.length() > 0 && result.attribute(className) != null) {
+      if (result.attribute(className).isString()) {
+        throw new Exception("Class attribute can only be numeric or nominal");
+      }
       result.setClass(result.attribute(className));
     }
 
