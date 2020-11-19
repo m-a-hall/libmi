@@ -15,12 +15,16 @@
 
 package org.phalanxdev.mi;
 
+import static junit.framework.TestCase.assertEquals;
+
 import java.io.StringReader;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.phalanxdev.mi.Evaluator.EvalMode;
 import org.phalanxdev.mi.utils.DefaultMIMessages;
 import weka.classifiers.trees.J48;
+import weka.core.Attribute;
 import weka.core.Instances;
 
 /**
@@ -46,18 +50,68 @@ public class EvaluatorTest {
 
   @Test(expected = IllegalStateException.class)
   public void testNoInitialization() throws Exception {
-    Evaluator evaluator = new Evaluator(EvalMode.CROSS_VALIDATION, 1, false, false, new DefaultMIMessages());
+    Evaluator evaluator = new Evaluator(EvalMode.CROSS_VALIDATION, 1, false, false,
+        new DefaultMIMessages());
 
     evaluator.getEvaluation();
   }
 
   @Test(expected = IllegalStateException.class)
   public void testIntializationButNoEvaluationPerformed() throws Exception {
-    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, false, false, new DefaultMIMessages());
+    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, false, false,
+        new DefaultMIMessages());
 
     m_data.setClassIndex(m_data.numAttributes() - 1);
     evaluator.initialize(m_data, new J48());
 
     evaluator.getEvaluation();
   }
+
+  @Test(expected = Exception.class)
+  public void testGetEvalRowMetadataNotInitialized() throws Exception {
+    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, false, false,
+        new DefaultMIMessages());
+
+    evaluator.getEvalRowMetadata(null, false);
+  }
+
+  @Test
+  public void testGetEvalRowMetadataNominalClassBasicMetrics() throws Exception {
+    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, false, false,
+        new DefaultMIMessages());
+
+    m_data.setClassIndex(m_data.numAttributes() - 1);
+    List<Attribute> metadata = evaluator.getEvalRowMetadata(m_data, false);
+    assertEquals(15, metadata.size());
+  }
+
+  @Test
+  public void testGetEvalRowMetadataNominalClassFullMetrics() throws Exception {
+    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, true, true,
+        new DefaultMIMessages());
+
+    m_data.setClassIndex(m_data.numAttributes() - 1);
+    List<Attribute> metadata = evaluator.getEvalRowMetadata(m_data, false);
+
+    // adds num class values * num IR and area under curve metrics
+    int expectedNumMetrics = 15 + (m_data.classAttribute().numValues() * 8);
+    assertEquals(expectedNumMetrics, metadata.size());
+  }
+
+  @Test
+  public void testGetEvalRowMetadataNumericClassBasicMetrics() throws Exception {
+    Evaluator evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, false, false,
+        new DefaultMIMessages());
+
+    m_data.setClassIndex(0);
+    List<Attribute> metadata = evaluator.getEvalRowMetadata(m_data, false);
+    assertEquals(10, metadata.size());
+
+    // turning on AUC and IR should have no affect
+    evaluator = new Evaluator(EvalMode.PERCENTAGE_SPLIT, 1, true, true,
+        new DefaultMIMessages());
+    metadata = evaluator.getEvalRowMetadata(m_data, false);
+    assertEquals(10, metadata.size());
+  }
+
 }
