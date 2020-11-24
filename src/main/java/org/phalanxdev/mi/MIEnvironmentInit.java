@@ -107,7 +107,7 @@ public class MIEnvironmentInit {
               "[LibMI] distributed Weka Spark package is not installed - attempting to install version "
                   + latestCompatibleVersion);
           WekaPackageManager
-              .installPackageFromRepository("distributedWekaSpark2Dev", latestCompatibleVersion,
+              .installPackageFromRepository("distributedWekaSpark3Dev", latestCompatibleVersion,
                   System.out);
         }
 

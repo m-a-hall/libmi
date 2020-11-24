@@ -292,6 +292,7 @@ public class EvaluatorTest {
     Object[] evalRow = evaluator.getEvalRow(null, 0, logger);
     assertNotNull(evalRow);
     assertEquals(15, evalRow.length);
+    assertNotNull(evaluator.getEvaluation());
   }
 
   @Test
@@ -308,5 +309,6 @@ public class EvaluatorTest {
     // adds num class values * num IR and area under curve metrics
     int expectedNumMetrics = 15 + (m_iris.classAttribute().numValues() * 8);
     assertEquals(expectedNumMetrics, evalRow.length);
+    assertNotNull(evaluator.getEvaluation());
   }
 }
