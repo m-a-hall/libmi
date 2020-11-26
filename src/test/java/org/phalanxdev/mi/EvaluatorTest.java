@@ -19,7 +19,11 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.phalanxdev.mi.Evaluator.EvalMode;
@@ -27,8 +31,11 @@ import org.phalanxdev.mi.utils.DefaultLogger;
 import org.phalanxdev.mi.utils.DefaultMIMessages;
 import org.phalanxdev.mi.utils.DefaultVariables;
 import org.phalanxdev.mi.utils.IMILogAdapter;
+import org.phalanxdev.mi.utils.IMIVariableAdaptor;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
+import weka.core.Environment;
+import weka.core.EnvironmentHandler;
 import weka.core.Instances;
 
 /**
@@ -212,6 +219,41 @@ public class EvaluatorTest {
   public void setup() throws Exception {
     m_simpleData = new Instances(new StringReader(s_data));
     m_iris = new Instances(new StringReader(s_irisData));
+  }
+
+  @Test
+  public void testConfigureWekaEnvironmentHandler() {
+    EnvironmentHandler environmentHandler = new EnvironmentHandler() {
+      @Override
+      public void setEnvironment(Environment environment) {
+        // nothing needed here
+      }
+    };
+
+    class DummyVars implements IMIVariableAdaptor {
+
+      Map<String, String> m_vars = new HashMap<>();
+
+      public DummyVars() {
+        m_vars.put("VAR1", "a value");
+        m_vars.put("NULLVAR", null);
+      }
+
+      @Override
+      public List<String> listVariables() {
+        return new ArrayList<String>(m_vars.keySet());
+      }
+
+      @Override
+      public String getVariable(String varName) {
+        return m_vars.get(varName);
+      }
+    }
+
+    DummyVars vars = new DummyVars();
+
+    // null variable value should not cause a problem
+    Evaluator.configureWekaEnvironmentHandler(environmentHandler, vars);
   }
 
   @Test(expected = IllegalStateException.class)

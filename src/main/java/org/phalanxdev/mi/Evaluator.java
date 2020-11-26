@@ -349,19 +349,19 @@ public class Evaluator {
 
       if (vars != null) {
         for (String var : vars.listVariables()) {
-          // if ( var.startsWith( "Internal." ) ) {
           String value = vars.getVariable(var);
-          if (value.toLowerCase().startsWith("file:")) {
-            value = value.replace(" ", "%20");
-            try {
-              File temp = new File(new java.net.URI(value));
-              value = temp.toString();
-            } catch (URISyntaxException e) {
-              e.printStackTrace();
+          if (value != null) {
+            if (value.toLowerCase().startsWith("file:")) {
+              value = value.replace(" ", "%20");
+              try {
+                File temp = new File(new java.net.URI(value));
+                value = temp.toString();
+              } catch (URISyntaxException e) {
+                e.printStackTrace();
+              }
             }
+            env.addVariable(var, value);
           }
-          env.addVariable(var, value);
-          //}
         }
       }
 
