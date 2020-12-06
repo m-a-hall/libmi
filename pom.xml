@@ -17,59 +17,15 @@
     <mockito-all.version>1.10.19</mockito-all.version>
     <buildId>${maven.build.timestamp}</buildId>
     <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-  </properties>
-  
-<!-- <repositories>
-    <repository>
-      <id>swt-repo</id>
-      <url>https://swt-repo.googlecode.com/svn/repo/</url>
-    </repository>
-    <repository>
-      <id>hop-repo</id>
-      <url>https://artifactory.project-hop.org/artifactory/hop-snapshots-local/</url>
-    </repository>
-</repositories> -->
+  </properties>  
   
   <dependencies>
-<!--    <dependency>
-      <groupId>pentaho.weka</groupId>
-      <artifactId>pdm-ce</artifactId>
-      <version>${weka.version}</version>
-    </dependency> -->
-
-  <dependency>
+    <dependency>
       <groupId>nz.ac.waikato.cms.weka</groupId>
       <artifactId>weka-stable</artifactId>
       <version>${weka.version}</version>
-  </dependency>
-
-<!-- Bit of a hack here (through including a local version of this).
-     Unfortunately, changes to 3.8.1.1 in svn are not being picked up
-     in Pentaho builds of Weka/PDM 3.8.1.1 for some reason -->
-<!--    <dependency>
-      <groupId>nz.ac.waikato.cms.weka</groupId>
-      <artifactId>weka-stable</artifactId>
-      <version>${weka.version}</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/weka-stable-${weka.version}.jar</systemPath>
     </dependency>
 
-    <dependency>
-      <groupId>nz.ac.waikato.cms.weka</groupId>
-      <artifactId>timeseriesForecasting</artifactId>
-      <version>${weka.timeseries.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>nz.ac.waikato.cms.weka</groupId>
-      <artifactId>kfKettle</artifactId>
-      <version>${weka.kfkettle.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>xpp3</groupId>
-      <artifactId>xpp3_min</artifactId>
-      <version>${xpp-min.version}</version>
-      <scope>provided</scope>
-    </dependency> -->
     <dependency> 
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -84,8 +40,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
-  
+    
   <build>
     <resources>
       <resource>
