@@ -182,6 +182,34 @@ public class PythonClassifierScheme extends SupervisedScheme {
     return result;
   }
 
+  /**
+   * Attempts to retrieve the values of pythonCommand, pythonPath and serverID. Returns null if these
+   * methods do not exist (i.e. we are using wekaPython < 1.0.13).
+   *
+   * @param scikitLearnClassifier the Weka scikit classifier to interrogate
+   * @return a list containing the values of pythonCommand, pythonPath and serverID respectively, or null
+   * if these methods do not exist.
+   */
+  protected List<String> getPythonServerConfig(Classifier scikitLearnClassifier) {
+    List<String> values = new ArrayList<>();
+    try {
+      Method m = scikitLearnClassifier.getClass().getDeclaredMethod( "getPythonCommand" );
+      String com = (String) m.invoke( scikitLearnClassifier );
+      m = scikitLearnClassifier.getClass().getDeclaredMethod( "getPythonPath" );
+      String path = (String) m.invoke( scikitLearnClassifier );
+      m = scikitLearnClassifier.getClass().getDeclaredMethod( "getServerID" );
+      String sID = (String) m.invoke( scikitLearnClassifier );
+      values.add( com );
+      values.add(path);
+      values.add(sID);
+      return values;
+    } catch (Exception ex) {
+      // don't complain
+    }
+
+    return null;
+  }
+
   protected String getDefaultParametersForLearner( Enum learnerEnumVal )
       throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
     String result = "";
@@ -300,6 +328,35 @@ public class PythonClassifierScheme extends SupervisedScheme {
 
           propertyList.put( name, propMap );
         }
+      }
+      List<String> pyServerConfig = getPythonServerConfig( m_scheme );
+      if (pyServerConfig != null && pyServerConfig.size() == 3) {
+        Map<String, Object> propMap = new LinkedHashMap<>();
+        // python command
+        propMap.put("name", "pythonCommand");
+        propMap.put("label", "Python command");
+        propMap.put("tip-text", "Path to python executable ('default' to use python in the PATH)");
+        propMap.put("type", "string");
+        propMap.put("value", pyServerConfig.get( 0 ) != null ? pyServerConfig.get( 0 ) : "");
+        propertyList.put( "pythonCommand", propMap );
+        // python path
+        propMap = new LinkedHashMap<>();
+        propMap.put("name", "pythonPath");
+        propMap.put("label", "Python path");
+        propMap.put("tip-text", "Optional elements to prepend to the PATH so that python can execute correctly "
+            + "('default' to use PATH as-is)");
+        propMap.put("type", "string");
+        propMap.put("value", pyServerConfig.get( 1 ) != null ? pyServerConfig.get( 1 ) : "");
+        propertyList.put( "pythonPath", propMap );
+        // server ID
+        propMap = new LinkedHashMap<>();
+        propMap.put("name", "serverID");
+        propMap.put("label", "Server name/ID");
+        propMap.put("tip-text", "Optional name to identify this server, can be used to share a given server instance - "
+            + "default='none' (that is, no server name)");
+        propMap.put("type", "string");
+        propMap.put("value", pyServerConfig.get( 2 ) != null ? pyServerConfig.get( 2 ) : "");
+        propertyList.put( "serverID", propMap );
       }
     } catch ( Exception ex ) {
       throw new WekaException( ex );
@@ -493,6 +550,33 @@ public class PythonClassifierScheme extends SupervisedScheme {
       setLearnerOptsOnScheme( m_scheme, b.toString() );
     } catch ( Exception ex ) {
       throw new WekaException( ex );
+    }
+
+    // now look for new python server config...
+    Map<String, Object> pythonCommand = parameters.get( "pythonCommand" );
+    Map<String, Object> pythonPath = parameters.get("pythonPath");
+    Map<String, Object> serverID = parameters.get("serverID");
+    if (pythonCommand != null && pythonPath != null && serverID != null) {
+      // now attempt to set these parameters, but only if we are using wekaPython >= 1.0.13!
+      try {
+        Method m = m_scheme.getClass().getDeclaredMethod( "setPythonCommand", String.class );
+        String pyComVal = (String) pythonCommand.get( "value" );
+        if (!SchemeUtils.isEmpty( pyComVal )) {
+          m.invoke( m_scheme, pyComVal );
+        }
+        String pyPathVal = (String) pythonPath.get("value");
+        if (!SchemeUtils.isEmpty( pyPathVal )) {
+          m = m_scheme.getClass().getDeclaredMethod( "setPythonPath", String.class );
+          m.invoke( m_scheme, pyPathVal );
+        }
+        String sIDVal = (String) serverID.get( "value" );
+        if (!SchemeUtils.isEmpty( sIDVal )) {
+          m = m_scheme.getClass().getDeclaredMethod( "setServerID", String.class );
+          m.invoke(m_scheme, sIDVal);
+        }
+      } catch ( NoSuchMethodException | IllegalAccessException | InvocationTargetException e ) {
+        // Quietly ignore if we are using an older version of wekaPython
+      }
     }
   }
 
